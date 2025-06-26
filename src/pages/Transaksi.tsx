@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tab } from '@headlessui/react';
-import TransaksiForm, { TransaksiData } from '../components/Transaksi/TransaksiForm';
+import TransaksiForm from '../components/Transaksi/TransaksiForm';
+import type { TransaksiData } from '../components/Transaksi/TransaksiForm';
 import OCRTransaksiForm from '../components/Transaksi/OCRTransaksiForm';
 import TransaksiList from '../components/Transaksi/TransaksiList';
 import LocalStorageService from '../services/LocalStorageService';

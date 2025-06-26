@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { createWorker } from 'tesseract.js';
-import { TransaksiData } from './TransaksiForm';
+import type { TransaksiData } from './TransaksiForm';
 
 interface OCRTransaksiFormProps {
   onSubmit: (data: TransaksiData) => void;

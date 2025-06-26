@@ -1,4 +1,4 @@
-import { TransaksiData } from '../components/Transaksi/TransaksiForm';
+import type { TransaksiData } from '../components/Transaksi/TransaksiForm';
 
 // Client ID dan API Key dari Google Cloud Console
 const CLIENT_ID = 'YOUR_CLIENT_ID';

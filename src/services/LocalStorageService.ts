@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import { TransaksiData } from '../components/Transaksi/TransaksiForm';
+import type { TransaksiData } from '../components/Transaksi/TransaksiForm';
 
 class TelagaPakisajiDatabase extends Dexie {
   transactions: Dexie.Table<TransaksiData & { id?: number }, number>;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { TransaksiData } from './TransaksiForm';
+import type { TransaksiData } from './TransaksiForm';
 
 interface TransaksiListProps {
   transactions: TransaksiData[];
