@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  PlusIcon, 
+  PencilIcon, 
+  TrashIcon, 
+  CheckIcon,
+  XMarkIcon,
+  ExclamationCircleIcon
+} from '@heroicons/react/24/outline';
 
 interface AkunManagerProps {
   accounts: string[];
@@ -69,38 +77,57 @@ const AkunManager = ({ accounts, onAddAccount, onEditAccount, onDeleteAccount }:
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="form-container"
-    >
-      <h2 className="text-xl font-semibold text-primary mb-4">Manajemen Chart of Account (COA)</h2>
+    <div className="p-6">
+      <h2 className="text-xl font-semibold text-primary mb-6 flex items-center">
+        Daftar Akun
+        <span className="ml-2 text-sm bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">
+          {accounts.length}
+        </span>
+      </h2>
       
-      <form onSubmit={handleAddAccount} className="mb-6">
-        <div className="flex flex-col md:flex-row gap-2">
-          <div className="flex-grow">
+      <form onSubmit={handleAddAccount} className="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
+        <div className="flex flex-col md:flex-row gap-3">
+          <div className="flex-grow relative">
             <input
               type="text"
               value={newAccount}
               onChange={(e) => setNewAccount(e.target.value)}
               placeholder="Nama akun baru"
-              className="input-field w-full"
+              className="input-field w-full pl-10 py-3"
             />
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <PlusIcon className="h-5 w-5" />
+            </div>
           </div>
-          <button type="submit" className="btn-primary whitespace-nowrap">
+          <button 
+            type="submit" 
+            className="btn-primary whitespace-nowrap flex items-center justify-center gap-2 py-3"
+          >
+            <PlusIcon className="h-5 w-5" />
             Tambah Akun
           </button>
         </div>
-        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        <AnimatePresence>
+          {error && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="flex items-center text-red-500 text-sm mt-2 gap-1"
+            >
+              <ExclamationCircleIcon className="h-4 w-4 flex-shrink-0" />
+              <span>{error}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </form>
       
-      <div className="overflow-x-auto">
-        <table className="data-table">
+      <div className="overflow-x-auto bg-white rounded-lg border border-gray-200 shadow-sm">
+        <table className="w-full">
           <thead>
-            <tr>
-              <th>Nama Akun</th>
-              <th className="text-right">Aksi</th>
+            <tr className="bg-gray-50 border-b border-gray-200">
+              <th className="text-left py-3 px-4 font-medium text-gray-700">Nama Akun</th>
+              <th className="text-right py-3 px-4 font-medium text-gray-700 w-32">Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -108,55 +135,64 @@ const AkunManager = ({ accounts, onAddAccount, onEditAccount, onDeleteAccount }:
               accounts.map((account, index) => (
                 <motion.tr
                   key={index}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="hover:bg-gray-50"
+                  initial={{ opacity: 0, backgroundColor: '#f0f9ff' }}
+                  animate={{ opacity: 1, backgroundColor: '#ffffff' }}
+                  transition={{ delay: index * 0.05, duration: 0.3 }}
+                  className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
                 >
-                  <td>
+                  <td className="py-3 px-4">
                     {editingAccount && editingAccount.original === account ? (
                       <form onSubmit={handleEditSubmit} className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={editingAccount.edited}
-                          onChange={(e) => setEditingAccount({ ...editingAccount, edited: e.target.value })}
-                          className="input-field w-full"
-                          autoFocus
-                        />
+                        <div className="relative w-full">
+                          <input
+                            type="text"
+                            value={editingAccount.edited}
+                            onChange={(e) => setEditingAccount({ ...editingAccount, edited: e.target.value })}
+                            className="input-field w-full pl-8 py-2 border-blue-300 focus:border-blue-500 focus:ring focus:ring-blue-200"
+                            autoFocus
+                          />
+                          <div className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-blue-500">
+                            <PencilIcon className="h-4 w-4" />
+                          </div>
+                        </div>
                       </form>
                     ) : (
-                      account
+                      <div className="font-medium text-gray-700">{account}</div>
                     )}
                   </td>
-                  <td className="text-right">
+                  <td className="py-3 px-4">
                     {editingAccount && editingAccount.original === account ? (
                       <div className="flex justify-end gap-2">
                         <button
                           onClick={handleEditSubmit}
-                          className="text-green-600 hover:text-green-800 transition-colors"
+                          className="p-1.5 rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition-colors"
+                          title="Simpan"
                         >
-                          Simpan
+                          <CheckIcon className="h-4 w-4" />
                         </button>
                         <button
                           onClick={cancelEditing}
-                          className="text-gray-600 hover:text-gray-800 transition-colors"
+                          className="p-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                          title="Batal"
                         >
-                          Batal
+                          <XMarkIcon className="h-4 w-4" />
                         </button>
                       </div>
                     ) : (
-                      <div className="flex justify-end gap-4">
+                      <div className="flex justify-end gap-2">
                         <button
                           onClick={() => startEditing(account)}
-                          className="text-blue-600 hover:text-blue-800 transition-colors"
+                          className="p-1.5 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                          title="Edit"
                         >
-                          Edit
+                          <PencilIcon className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => confirmDelete(account)}
-                          className="text-red-600 hover:text-red-800 transition-colors"
+                          className="p-1.5 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                          title="Hapus"
                         >
-                          Hapus
+                          <TrashIcon className="h-4 w-4" />
                         </button>
                       </div>
                     )}
@@ -165,15 +201,21 @@ const AkunManager = ({ accounts, onAddAccount, onEditAccount, onDeleteAccount }:
               ))
             ) : (
               <tr>
-                <td colSpan={2} className="text-center py-4 text-gray-500">
-                  Belum ada akun yang ditambahkan.
+                <td colSpan={2} className="text-center py-8 text-gray-500">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="bg-gray-100 p-3 rounded-full">
+                      <PlusIcon className="h-6 w-6 text-gray-400" />
+                    </div>
+                    <p>Belum ada akun yang ditambahkan.</p>
+                    <p className="text-sm text-gray-400">Tambahkan akun baru menggunakan form di atas.</p>
+                  </div>
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

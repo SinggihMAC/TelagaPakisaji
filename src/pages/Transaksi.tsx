@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Tab } from '@headlessui/react';
 import TransaksiForm from '../components/Transaksi/TransaksiForm';
 import type { TransaksiData } from '../components/Transaksi/TransaksiForm';
@@ -7,6 +8,19 @@ import OCRTransaksiForm from '../components/Transaksi/OCRTransaksiForm';
 import TransaksiList from '../components/Transaksi/TransaksiList';
 import LocalStorageService from '../services/LocalStorageService';
 import GoogleSheetsService from '../services/GoogleSheetsService';
+import { 
+  CurrencyDollarIcon, 
+  ArrowPathIcon, 
+  CameraIcon, 
+  CloudArrowUpIcon,
+  CloudArrowDownIcon,
+  ExclamationCircleIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  DocumentTextIcon,
+  PlusIcon,
+  ClockIcon
+} from '@heroicons/react/24/outline';
 
 const Transaksi = () => {
   const [transactions, setTransactions] = useState<TransaksiData[]>([]);
@@ -145,83 +159,128 @@ const Transaksi = () => {
   };
 
   return (
-    <div>
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
       <motion.div 
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-8"
+        className="mb-8"
       >
-        <h1 className="text-2xl md:text-3xl font-bold text-primary mb-2">
-          Input Transaksi
-        </h1>
-        <p className="text-gray-600">
-          Catat transaksi keuangan secara manual atau via screenshot chat WA
-        </p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-3xl font-bold mb-2 text-gray-800">Input Transaksi</h1>
+            <p className="text-gray-600">
+              Catat transaksi keuangan secara manual atau via screenshot untuk memudahkan pencatatan
+            </p>
+          </div>
+        </div>
+        
+        {/* Online/Offline Status */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+          <div className="flex items-center gap-3">
+            <div className={`h-4 w-4 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'} flex-shrink-0`}></div>
+            <span className="text-sm font-medium text-gray-700">
+              Status: {isOnline ? 'Online' : 'Offline'}
+            </span>
+            {isOnline && (
+              <span className="text-xs bg-green-100 text-green-800 py-1 px-2 rounded-full">
+                Siap sinkronisasi
+              </span>
+            )}
+            {!isOnline && (
+              <span className="text-xs bg-yellow-100 text-yellow-800 py-1 px-2 rounded-full">
+                Penyimpanan lokal
+              </span>
+            )}
+          </div>
+          <AnimatePresence>
+            {syncStatus && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-2 text-sm font-medium text-blue-700 bg-blue-50 px-3 py-1.5 rounded-lg"
+              >
+                <ArrowPathIcon className={`h-4 w-4 ${syncStatus.includes('Menyinkronkan') ? 'animate-spin' : ''}`} />
+                <span>{syncStatus}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </motion.div>
       
-      {/* Online/Offline Status */}
-      <div className="mb-6 flex justify-between items-center">
-        <div className="flex items-center">
-          <div className={`h-3 w-3 rounded-full mr-2 ${isOnline ? 'bg-green-500' : 'bg-red-500'}`}></div>
-          <span className="text-sm text-gray-600">
-            {isOnline ? 'Online' : 'Offline'}
-          </span>
-        </div>
-        {syncStatus && (
-          <div className="text-sm text-gray-600">
-            {syncStatus}
-          </div>
-        )}
-      </div>
-      
       {/* Tabs for Manual and OCR Input */}
-      <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
-        <Tab.List className="flex space-x-1 rounded-xl bg-primary/10 p-1 mb-6">
-          <Tab
-            className={({ selected }) =>
-              `w-full rounded-lg py-2.5 text-sm font-medium leading-5 transition-colors
-              ${selected
-                ? 'bg-primary text-white shadow'
-                : 'text-primary hover:bg-primary/20'}`
-            }
-          >
-            Input Manual
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+        <Tab.Group selectedIndex={selectedTab} onChange={setSelectedTab}>
+          <Tab.List className="flex bg-gray-50 border-b border-gray-200">
+            <Tab
+              className={({ selected }) =>
+                `flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors focus:outline-none
+                ${selected
+                  ? 'bg-white text-primary-600 border-b-2 border-primary-600'
+                  : 'text-gray-600 hover:text-primary-600 hover:bg-gray-100'}`
+              }
+            >
+              <PlusIcon className="h-5 w-5" />
+              Input Manual
           </Tab>
           <Tab
             className={({ selected }) =>
-              `w-full rounded-lg py-2.5 text-sm font-medium leading-5 transition-colors
+              `flex items-center gap-2 px-6 py-3 text-sm font-medium transition-colors focus:outline-none
               ${selected
-                ? 'bg-primary text-white shadow'
-                : 'text-primary hover:bg-primary/20'}`
+                ? 'bg-white text-primary-600 border-b-2 border-primary-600'
+                : 'text-gray-600 hover:text-primary-600 hover:bg-gray-100'}`
             }
           >
+            <CameraIcon className="h-5 w-5" />
             Input via Screenshot
           </Tab>
         </Tab.List>
-        <Tab.Panels>
+        <Tab.Panels className="p-6">
           <Tab.Panel>
-            <TransaksiForm 
-              onSubmit={handleSubmitTransaction} 
-              accounts={accounts} 
-            />
+            <div className="max-w-3xl mx-auto">
+              <TransaksiForm 
+                onSubmit={handleSubmitTransaction} 
+                accounts={accounts} 
+              />
+            </div>
           </Tab.Panel>
           <Tab.Panel>
-            <OCRTransaksiForm 
-              onSubmit={handleSubmitTransaction} 
-              accounts={accounts} 
-            />
+            <div className="max-w-3xl mx-auto">
+              <OCRTransaksiForm 
+                onSubmit={handleSubmitTransaction} 
+                accounts={accounts} 
+              />
+            </div>
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
+      </div>
       
       {/* Transaction List */}
-      <div className="mt-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary-50 rounded-lg">
+              <ClockIcon className="h-6 w-6 text-primary-600" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-800">Riwayat Transaksi</h2>
+          </div>
+          <span className="text-sm bg-gray-100 text-gray-700 py-1 px-3 rounded-full">
+            {transactions.length} Transaksi
+          </span>
+        </div>
+        
         <TransaksiList 
           transactions={transactions} 
           onDelete={handleDeleteTransaction} 
         />
-      </div>
+      </motion.div>
     </div>
   );
 };
