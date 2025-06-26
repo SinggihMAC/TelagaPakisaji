@@ -1,0 +1,44 @@
+/* App-specific styles that complement Tailwind CSS */
+
+/* Animasi untuk judul dengan Framer Motion */
+.title-animation {
+  display: inline-block;
+}
+
+/* Gaya untuk container utama */
+.app-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6;
+}
+
+/* Gaya untuk header aplikasi */
+.app-header {
+  @apply bg-primary text-white py-4 px-6 shadow-md;
+}
+
+/* Gaya untuk footer aplikasi */
+.app-footer {
+  @apply bg-primary-dark text-white py-4 px-6 mt-auto;
+}
+
+/* Gaya untuk form */
+.form-container {
+  @apply bg-white rounded-lg shadow-md p-6 mb-6;
+}
+
+/* Gaya untuk tabel */
+.data-table {
+  @apply w-full border-collapse;
+}
+
+.data-table th {
+  @apply bg-primary text-white p-3 text-left;
+}
+
+.data-table td {
+  @apply border-b border-gray-200 p-3;
+}
+
+/* Gaya untuk loading spinner */
+.loading-spinner {
+  @apply animate-spin h-8 w-8 text-primary;
+}
